@@ -1,0 +1,74 @@
+<div class="container-fluid">
+  {{!-- The modal window used for the form --}}
+  <div class="row">
+    <div id="modal-box">
+      <div id="input-box">
+        <div id="new-burger">
+          
+          <img id="design-burger" src="assets/img/design_burger.jpg">
+          <div class="centered">Create Your Burger</div>
+          {{!-- New Burger form inserted here --}}
+        </div>
+        <div id="burger-filter">
+          {{!-- Filter results form inserted here --}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dock">
+    {{!-- Removed because there is a problem with the Heroku DB for this query
+    Will re-implement with the upcoming sequelize addition --}}
+    {{!-- <button id="refreshButton" class="btn">Reset Inventory</button> --}}
+    <button id="clearButton" class="btn">Clear the Eaten</button> 
+  </div>
+  <div class="row">
+    <div class="filter">
+      <button id="toggleFilter" class="unfiltered">
+        Filter Results
+      </button>
+    </div>
+    <div id="title">
+      <div class="col-sm-8">
+        <h1>Eat-Da-Burger</h1>
+      </div>
+      <div class="col-sm-4">
+        <div class='burger-label'></div>
+        <img src="assets/img/flat_burger.jpg" id="newBurgerButton">
+        <div class='burger-label'>
+          Make a Burger! <span class="glyphicon glyphicon-hand-up"></span>
+
+        </div>
+      </div>
+    </div>
+  </div>  
+  <div class="row">
+    <div class="col-s-6" id="uneaten-box">
+      <h2>Click to Eat</h2>
+      {{#each uneaten}}
+        <div class="burger col-sm-6 col-lg-4 text-center">
+          <img src="/assets/img/good_burger.png" class="uneaten-burger clickable" data-id="{{this.id}}" alt="Good Burger">
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">{{this.burger_name}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu ingredient-dropdown" id="{{this.id}}" role="menu" aria-labelledby="menu1"></ul>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    <div class="col-s-6" id="eaten-box">
+      <h2>Burgers Past</h2>
+      {{#each eaten}}
+        <div class="burger col-sm-6 col-lg-4">
+          <img src="/assets/img/gone_burger.png" class="eaten-burger" data-id="{{this.id}}" alt="Good Burger">
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">{{this.burger_name}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu ingredient-dropdown" id="{{this.id}}" role="menu" aria-labelledby="menu1"></ul>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
