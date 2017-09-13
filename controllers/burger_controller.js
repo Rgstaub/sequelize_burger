@@ -5,76 +5,83 @@ const express = require('express');
 const router = express.Router();
 
 // Import the Burger constructor
-const burgers = require('../models/burger.js')
+// const burgers = require('../models/burger.js')
+const db = require('../models');
 
 //=========================== Routes ==================================
 
-router.get('/', (req, res) => {
-  // Get all the burger data
+module.exports = (app) => {
+  app.get('/', (req, res) => {
+    // Get all the burger data
+    db.burger.findAll({}).then((data) => {
+    //burgers.getAll(response => {
+      // divide it into devoured and not devoured arrays
+      let sortedBurgers = seperateEaten(data);
+      // Send it to handlebars to render
+      res.render('index', sortedBurgers);
 
-  burgers.getAll(response => {
-    // divide it into devoured and not devoured arrays
-    let sortedBurgers = seperateEaten(response);
-    // Send it to handlebars to render
-    res.render('index', sortedBurgers);
-  })
-})
-
-router.get('/ingredients', (req, res) => {
-  burgers.getAll((response) => {
-    let burgerArr = [];
-    response.forEach((burger) => {
-      burger.ingredients = setIngredients(burger);
-      burgerArr.push(burger);
     })
-    res.send(burgerArr);
-  })
-})
-
-router.post('/filter', (req, res) => {
-  let values = [];
-  let keys = Object.keys(req.body);
-  keys.forEach(key => {
-    values.push(req.body[key]);
   })
 
-  burgers.getSome(keys, values, response => {
-    let sortedBurgers = seperateEaten(response);
-    res.render('index', sortedBurgers);
+  app.get('/ingredients', (req, res) => {
+    db.burger.findAll({}).then( response => {
+      
+      console.log(response)
+      let burgerArr = [];
+      response.forEach( burger => {
+        burger.ingredients = setIngredients(burger);
+        burgerArr.push(burger);
+      })
+      res.send(burgerArr);
+    })
   })
-})
 
-router.post('/', (req, res) => {
-  // Create a new burger using the new Burger name
-  burgers.addOne(req.body);
-  // Redirect to home to re-render the page
-  res.redirect("/");
-})
+  app.post('/filter', (req, res) => {
+    let values = [];
+    let keys = Object.keys(req.body);
+    keys.forEach(key => {
+      values.push(req.body[key]);
+    })
 
-// 'Devour' a burger of a given input
-router.post('/_put/:id', (req, res) => {
-  burgers.eatOne(req.params.id);
-  res.status(201);
-})
+    burgers.getSome(keys, values, response => {
+      let sortedBurgers = seperateEaten(response);
+      res.render('index', sortedBurgers);
+    })
+  })
 
-// Reset all the burger values to the default
-router.post('/refresh', (req, res) => {
-  burgers.refreshAll();
-  res.status(201);
-})
+  app.post('/', (req, res) => {
+    // Create a new burger using the new Burger name
+    console.log(req.body);
+    db.burger.create(req.body);
+    // Redirect to home to re-render the page
+    res.redirect("/");
+  })
 
-// Delete all rows where devoured=true
-router.post('/clear', (req, res) => {
-  burgers.clearEaten();
-  res.status(201);
-})
+  // 'Devour' a burger of a given input
+  app.post('/_put/:id', (req, res) => {
+    burgers.eatOne(req.params.id);
+    res.status(201);
+  })
 
-module.exports = router;
+  // Reset all the burger values to the default
+  app.post('/refresh', (req, res) => {
+    burgers.refreshAll();
+    res.status(201);
+  })
+
+  // Delete all rows where devoured=true
+  app.post('/clear', (req, res) => {
+    burgers.clearEaten();
+    res.status(201);
+  })
+}
+
 
 //========================= Functions ============================
 
 let setIngredients = (burger) => {
   // This will be an array with a formatted list of ingredients to be returned
+  
   let ingredientArr = [];
   // Get an array of keys to loop over
   let keys = Object.keys(burger);
@@ -98,6 +105,7 @@ let setIngredients = (burger) => {
     }
   }
   // return the completed array of ingredients
+  console.log(ingredientArr);
   return ingredientArr;
 }
 

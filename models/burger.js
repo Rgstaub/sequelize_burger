@@ -1,37 +1,57 @@
-const sequelize = require('../config/connections.js');
-
-
-
-
-
-
-
-
-
-// Add the ORM methods
-// var burger = {
-//   getAll: (cb) => {
-//     orm.selectAll(cb);
-//   },
-//   getSome: (columns, values, cb) => {
-//     // Prevent an empty filter form from being submitted
-//     if (columns.length === 2 && 
-//         values[0] === "No Selection" && 
-//         values[1] === "No Selection") return;
-//     orm.filteredSelect(columns, values, cb)
-//   },
-//   addOne: (newBurger) => {
-//     orm.insertOne(newBurger);
-//   },
-//   eatOne: (id) => {
-//     orm.updateOne(id);
-//   },
-//   refreshAll: () => {
-//     orm.refreshAll();
-//   },
-//   clearEaten: () => {
-//     orm.clearDevoured();
-//   }
-// }
-
-module.exports = burgers;
+module.exports = (sequelize, DataTypes) => {
+  let Burger = sequelize.define('burger', {
+    devoured: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    burger_name: {
+      type: DataTypes.STRING,
+      defaultValue: "Anonymous"
+    },
+    bun: {
+      type: DataTypes.STRING,
+      defaultValue: "Sesame-Seed"
+    },
+    patty: {
+      type: DataTypes.STRING,
+      defaultValue: "Beef"
+    },
+    pickles: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    ketchup: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    mustard: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    onions: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    cheese: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    tomato: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    bacon: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    lettuce: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    special: {
+      type: DataTypes.STRING,
+      defaultValue: null
+    }
+  })
+  return Burger;
+};
