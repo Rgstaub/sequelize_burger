@@ -11,13 +11,19 @@ $(document).ready(() => {
 //================== Event Listeners =======================
 
   $.get("/ingredients", function(response) {
-    response.forEach( function(burger) {
-      burger.ingredients.forEach( function(ingredient) {
-        var element = $('<li role="presentation"></li>');
-        element.text(ingredient);
-        $(`#${burger.id}`).append(element);
-      });
-    });
+
+
+    response.forEach(burger => {
+      displayIngredients(burger);
+    })
+
+    // response.forEach( function(burger) {
+    //   burger.ingredients.forEach( function(ingredient) {
+    //     var element = $('<li role="presentation"></li>');
+    //     element.text(ingredient);
+    //     $(`#${burger.id}`).append(element);
+    //   });
+    // });
   });
 
   // create an on click event for the burger image to 'eat' a burger
@@ -79,16 +85,47 @@ $(document).ready(() => {
     $('#modal-box').fadeIn();
   });
 
-//===================== Functions ==========================
+  //===================== Functions ==========================
 
-// Build a new form with options passed in as follows:
-// settings = {
-    // action: "/", 
-    // method: "post", 
-    // type: "input", // "filter" to remove name field and toggle special
-    // parent: "input-box", // The ID of the element to attach to
-    // name: "add" // This will also be the text on the submit button
-    // }
+  const displayIngredients = function(burger) {
+    let omittedKeys = ['id', 'devoured', 'createdAt', 'updatedAt', 'burger_name']
+    let keys = Object.keys(burger);
+    let ingredients = [];
+    let id = burger.id;
+    
+    keys.forEach(key => {
+      if (omittedKeys.indexOf(key) > -1) {
+        return;
+      } else if (key === 'patty') {
+        ingredients.splice(0, 0 ,`${burger[key]} Patty`);
+      } else if (key === 'bun') {
+        ingredients.splice(1, 0, `${burger[key]} Bun`);
+      } else if (key === 'special' && burger[key].length > 0) {
+        ingredients.push(burger[key]);
+      } else {
+        if (burger[key] === true) {
+          let formatted = key.charAt(0).toUpperCase() + key.slice(1);
+          ingredients.push(formatted);
+        }
+      }
+
+    })
+    console.log(ingredients);
+    ingredients.forEach(ingredient => {
+      var element = $('<li role="presentation"></li>');
+      element.text(ingredient);
+      $(`#${id}`).append(element);
+    })
+  }
+
+  // Build a new form with options passed in as follows:
+  // settings = {
+      // action: "/", 
+      // method: "post", 
+      // type: "input", // "filter" to remove name field and toggle special
+      // parent: "input-box", // The ID of the element to attach to
+      // name: "add" // This will also be the text on the submit button
+      // }
   const formBuilder = function(settings) {
     let formContainer = $(`<form action="${settings.action}" method="${settings.method}" class="form-inline"></form>`)
     FORM.forEach((ingredient) => {
