@@ -1,11 +1,6 @@
 "use strict"
 
-// Create the router
-// const express = require('express');
-// const router = express.Router();
-
-// Import the Burger constructor
-// const burgers = require('../models/burger.js')
+// Import the sequelize models
 const db = require('../models');
 
 //=========================== Routes ==================================
@@ -19,7 +14,6 @@ module.exports = (app) => {
       let sortedBurgers = seperateEaten(data);
       // Send it to handlebars to render
       res.render('index', sortedBurgers);
-
     })
   })
 
@@ -31,35 +25,27 @@ module.exports = (app) => {
 
   app.post('/filter', (req, res) => {
     let filters = req.body;
+    // Remove optional patty and bun filters
     if (filters. patty === 'No Selection') {
       delete filters.patty;
     }
     if (filters.bun === 'No Selection') {
       delete filters.bun;
     }
+    // Convert any "true" values from string to boolean
+    let keys = Object.keys(filters);
+    keys.forEach(key => {
+      if (filters[key] === 'true') {
+        filters[key] = true;
+      }
+    })
     console.log(filters);
     db.burger.findAll({
       where: filters
     }).then( results => {
       let sortedBurgers = seperateEaten(results);
       res.render('index', sortedBurgers);
-    })
-    // let values = [];
-    // let keys = Object.keys(req.body);
-    // keys.forEach(key => {
-    //   values.push(req.body[key]);
-    // })
-    // console.log(keys);
-    // console.log(values);
-    // db.burger.findAll({
-    //   where: {
-    //     keys[2]: values[2]
-    //   }
-    // })
-    // burgers.getSome(keys, values, response => {
-    //   let sortedBurgers = seperateEaten(response);
-    //   res.render('index', sortedBurgers);
-    // })
+    }).finally()
   })
 
   app.post('/', (req, res) => {
